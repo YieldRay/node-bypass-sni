@@ -1,0 +1,12 @@
+[default]
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = pixiv.net
+DNS.2 = *.pixiv.net
+DNS.3 = pximg.net
+DNS.4 = *.pximg.net
+DNS.5 = *.pixiv.org
