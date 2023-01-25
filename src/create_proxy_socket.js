@@ -38,7 +38,7 @@ function createProxySocketServer(tlsOptions = {}, options = {}, clientTlsOptions
                 clientTlsOptions // this is client tls options for connecting to target site
             );
             targetSocket.on("error", (err) => {
-                console.warn(err.message); // log a warning
+                console.warn(`(${domain} ${ip}) ${err.message}`); // log a warning
                 socket.end();
             });
             socket.pipe(targetSocket);

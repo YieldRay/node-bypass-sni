@@ -11,6 +11,7 @@ const createBypassSNISocket = require("./socket_bypass_sni");
  *     method?: string;
  *     body?: Buffer;
  *     headers?: { [key: string]: string };
+ *     signal?: AbortSignal;
  * }}
  * @returns {Promise<{statusCode:string; statusText:string; headers:{[key: string]:string}; body:Buffer;}>}
  */
@@ -20,15 +21,20 @@ function httpRequest(options, tlsOptions) {
     const servername = options.servername || host;
     const path = options.path || "/";
     const method = (options.method || "GET").toUpperCase();
+    if (!METHODS.includes(method)) console.warn(`unknown method: ${method}`);
     const headers = options.headers || {};
     const body = options.body || "";
     const bodyData = body instanceof Buffer ? body : Buffer.from(body);
-    if (!METHODS.includes(method)) console.warn(`unknown method: ${method}`);
+    const signal = options.signal;
 
     const socket = createBypassSNISocket({ host, port, servername }, tlsOptions);
     socket.setKeepAlive(false);
 
     return new Promise((resolve, reject) => {
+        if (signal instanceof AbortSignal) {
+            signal.addEventListener("abort", reject, { once: true });
+        }
+
         socket.write(
             Buffer.concat([
                 Buffer.from(
@@ -49,7 +55,10 @@ function httpRequest(options, tlsOptions) {
         );
         const chunks = [];
         socket.on("data", (data) => chunks.push(data));
-        socket.on("error", reject);
+        socket.on("error", (err) => {
+            socket.destroy();
+            reject(err);
+        });
         socket.on("end", () => {
             const [info, body] = fixChunks(chunks);
             resolve({ ...info, body });
@@ -58,15 +67,15 @@ function httpRequest(options, tlsOptions) {
 }
 
 function formatHeaders(obj) {
-    let o = {};
-    for (let [k, v] of Object.entries(obj)) {
-        k = k
-            .split("-")
-            .map((str) => str[0].toUpperCase() + str.slice(1))
-            .join("-");
-        o[k] = v;
-    }
-    return o;
+    return Object.fromEntries(
+        Object.entries(obj).map(([k, v]) => [
+            k
+                .split("-")
+                .map((str) => str[0].toUpperCase() + str.slice(1))
+                .join("-"),
+            v,
+        ])
+    );
 }
 
 function parseHeaders(rows) {

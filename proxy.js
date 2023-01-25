@@ -9,12 +9,10 @@ const server = createProxySocketServer(
     },
     {
         domain2ip: {
-            "www.pixiv.net": "210.140.92.193",
-            "s.pximg.net": "210.140.92.144",
-            "accounts.pixiv.net": "172.64.151.90",
-            "i.pximg.net": "210.140.92.141",
+            "www.pixiv.net": ["172.64.151.90", "210.140.92.183", "210.140.92.187", "210.140.92.193"],
+            // "i.pximg.net": "210.140.92.145", // 210.140.92.14[1-9]
         },
-        dnsServer: ["223.5.5.5", "223.6.6.6"],
+        dnsServer: "https://cors.488848.xyz/https://dns.google/resolve",
         fakeServername: "github.com",
     }
 );
