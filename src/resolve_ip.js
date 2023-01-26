@@ -2,8 +2,10 @@ const resolveNormal = require("./resolve_ip_normal");
 const { dohResolve: resolveDoH } = require("./resolve_ip_doh");
 
 const httpRequest = require("./http_bypass_sni");
+
 /**
  * This use HTTP HEAD request for test
+ * @returns {Promise<boolean>}
  */
 async function testBypass(domain, ip, timeout = 2000) {
     try {

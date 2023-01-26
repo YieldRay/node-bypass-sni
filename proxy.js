@@ -1,5 +1,4 @@
 const fs = require("node:fs");
-
 const createProxySocketServer = require("./src/create_proxy_socket");
 
 const server = createProxySocketServer(

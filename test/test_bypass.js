@@ -1,9 +1,6 @@
 const httpRequest = require("../src/http_bypass_sni");
 const createResolve = require("../src/resolve_ip");
-const resolve4 = createResolve(
-    {},
-    "https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/make-api-requests/dns-json/"
-);
+const resolve4 = createResolve({}, "https://cors.488848.xyz/https://cloudflare-dns.com/dns-query");
 
 async function testBypass(domain, ip, timeout = 2000) {
     try {
